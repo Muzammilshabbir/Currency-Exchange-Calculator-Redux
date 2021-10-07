@@ -24,7 +24,7 @@ export function RateTable({ currencyData, amount }) {
 
       <tfoot>
         <tr>
-          <td colspan="2">{useSelector(getFullName)}</td>
+          <td colSpan="2">{useSelector(getFullName)}</td>
         </tr>
       </tfoot>
     </table>

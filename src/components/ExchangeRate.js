@@ -47,7 +47,7 @@ export function ExchangeRate() {
         <h1 className="ExchangeRate-header">
           Exchange Rates{" "}
           <CurrencyCodePicker
-            supportedCurrencies={supportedCurrencies}
+            // supportedCurrencies={supportedCurrencies}
             currencyCode={currencyCode}
             // onChange={handleCurrencyCode}
           />

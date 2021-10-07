@@ -1,12 +1,13 @@
 import { getExchangeRates } from "../api"
 
-export const supportedCurrencies = ["USD", "EUR", "JPY", "CAD", "GBP", "MXN"];
+// export const supportedCurrencies = ["USD", "EUR", "JPY", "CAD", "GBP", "MXN"];
 
 
 const initialState = {
     amount: "1.00",
     currencyCode: "USD",
-    currencyData: { USD: 1.0 }
+    currencyData: { USD: 1.0 },
+    supportedCurrencies: ["USD", "EUR", "JPY", "CAD", "GBP", "MXN"]
 }
 
 export function ratesReducer(state = initialState, action) {
@@ -15,12 +16,17 @@ export function ratesReducer(state = initialState, action) {
             return { ...state, amount: action.payload }
         case CURRENCY_CODE_CHANGED:
             return { ...state, currencyCode: action.payload }
-        case "rates/ratesReceived":
-            return { ...state, currencyData: action.payload }
+
+        case "rates/ratesReceived": {
+            const codes = Object.keys(action.payload);
+            return { ...state, currencyData: action.payload,supportedCurrencies:codes }
+        }
+
         default:
             return state
     }
 }
+
 
 //selectors
 export const getAmount = state => state.rates.amount
@@ -46,24 +52,30 @@ export const changeAmount = (amount) => ({
 //     });
 // })
 
+
+
 export function changeCurrencyCode(currencyCode) {
-    return function changeCurrencyCodeThunk(dispatch) {
+    return function changeCurrencyCodeThunk(dispatch, getState) {
+        const state = getState();
+
+        const supportedCurrencies = state.rates.supportedCurrencies
+        getExchangeRates(currencyCode, supportedCurrencies).then(rates => {
+            dispatch({
+                type: "rates/ratesReceived",
+                payload: rates
+            });
+        })
         dispatch({
             type: CURRENCY_CODE_CHANGED,
             payload: currencyCode,
         });
-        getExchangeRates(currencyCode,supportedCurrencies).then(rates => {
-            dispatch({
-                type:"rates/ratesReceived",
-                payload: rates
-            });
-        })
+
     }
 };
 
 //thunks 
 
-export function getInitialRates(dispatch,getState) {
+export function getInitialRates(dispatch, getState) {
     const state = getState();
     const currencyCode = getCurrencyCode(state);
     dispatch(changeCurrencyCode(currencyCode))
