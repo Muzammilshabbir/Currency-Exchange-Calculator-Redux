@@ -1,0 +1,21 @@
+import { useDispatch } from "react-redux";
+// import { AMOUNT_CHANGED } from "../store/rates";
+import { changeAmount } from "../store/rates";
+export function AmountField({ amount, onChange }) {
+
+  const dispatch = useDispatch();
+  function onChange(e) {
+    dispatch(changeAmount(e.target.value))
+    // dispatch({type: "amountChanged", payload: e.target.value})
+  }
+  return (
+    <form className="ExchangeRate-form">
+      <input
+        aria-label="Amount in base currency"
+        type="text"
+        value={amount}
+        onChange={onChange}
+      />
+    </form>
+  );
+}
